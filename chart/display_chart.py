@@ -41,7 +41,7 @@ def display_chart(symbol: str, stock_data: dict, chart_key: str | None = None):
         
         # Use provided key or generate a unique one
         key = chart_key or f"chart_{uuid.uuid4()}"
-        st.plotly_chart(fig, use_container_width=True, key=key)
+        st.plotly_chart(fig, key=key, width="stretch")
         
         # Show latest price info
         latest = df.iloc[-1]

@@ -1,4 +1,5 @@
-import streamlit as st
+"""Stock analysis task."""
+
 from reasoning import run_agent
 
 
@@ -19,12 +20,3 @@ def run_analysis_task(symbol: str, query: str) -> dict:
             "response": f"Sorry, I encountered an error: {str(e)}",
             "symbol": symbol
         }
-
-
-@st.fragment(run_every=2)
-def poll_background_tasks():
-    """Poll for completed background tasks every 2 seconds."""
-    if st.session_state.background_tasks:
-        for symbol, future in list(st.session_state.background_tasks.items()):
-            if future.done():
-                st.rerun()

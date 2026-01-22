@@ -8,7 +8,7 @@ def render_sidebar():
     """Render the sidebar with stock navigation."""
     with st.sidebar:
         st.markdown(
-            '<h1 style="margin-top: -50px;">📈 AI Stock Analyzer</h1>',
+            '<h1 style="margin-top: -50px;">◈ AI Stock Analyzer</h1>',
             unsafe_allow_html=True
         )
         
@@ -24,43 +24,56 @@ def render_sidebar():
         else:
             st.caption("No stocks analyzed yet. Ask a question to get started!")
         
-        if st.button("➕ New Chat", use_container_width=True):
+        st.divider()
+
+        if st.button("+ New Chat", width="stretch"):
             st.session_state.selected_stock = None
             st.session_state.selected_view = "chat"
             st.rerun()
         
-        if st.button("🔄 Refresh All Stocks", use_container_width=True):
+        if st.button("↻ Refresh All", width="stretch"):
             _refresh_all_stocks()
             st.rerun()
         
-        st.divider()
-        
-        if st.button("🗑️ Clear All", use_container_width=True):
+        if st.button("✕ Clear All", width="stretch"):
             clear_all_state()
             st.rerun()
+        
+        # Settings section at bottom
+        with st.expander("Settings"):
+            beginner_mode = st.toggle(
+                "Beginner Mode",
+                value=st.session_state.beginner_mode,
+                help="Shows simplified takeaways with ratings, risk levels, and advice for new investors"
+            )
+            if beginner_mode != st.session_state.beginner_mode:
+                st.session_state.beginner_mode = beginner_mode
+                # Save to persistent storage
+                from history import save_settings
+                save_settings({"beginner_mode": beginner_mode})
+                st.rerun()
 
 
 def _render_stock_item(symbol: str):
     """Render a single stock item in the sidebar."""
     # Check if analysis is running for this stock
     is_analyzing = symbol in st.session_state.active_threads
-    analyzing_badge = " (thinking...)" if is_analyzing else ""
+    analyzing_badge = " ..." if is_analyzing else ""
     
-    # Build expander label with logo and symbol
-    expander_label = f"![logo]({get_stock_logo_url(symbol)}) **{symbol}**{analyzing_badge}"
+    # Check if this stock is currently selected
+    is_selected = st.session_state.selected_stock == symbol
+    button_type = "primary" if is_selected else "secondary"
     
-    with st.expander(expander_label, expanded=(st.session_state.selected_stock == symbol)):
-        # Chart button
-        if st.button("📊 Chart", key=f"chart_btn_{symbol}", use_container_width=True):
-            st.session_state.selected_stock = symbol
-            st.session_state.selected_view = "chart"
-            st.rerun()
-        
-        # Chat button
-        if st.button("💬 Chat", key=f"chat_btn_{symbol}", use_container_width=True):
-            st.session_state.selected_stock = symbol
-            st.session_state.selected_view = "chat"
-            st.rerun()
+    # Create button with logo
+    if st.button(
+        f"![logo]({get_stock_logo_url(symbol)}) {symbol}{analyzing_badge}",
+        key=f"stock_btn_{symbol}",
+        width="stretch",
+        type=button_type
+    ):
+        st.session_state.selected_stock = symbol
+        st.session_state.selected_view = "chat"
+        st.rerun()
 
 
 def _refresh_all_stocks():

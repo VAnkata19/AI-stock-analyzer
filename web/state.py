@@ -1,6 +1,6 @@
 import streamlit as st
 from concurrent.futures import ThreadPoolExecutor
-from history import load_conversations, clear_conversations
+from history import load_conversations, clear_conversations, load_settings
 
 
 def init_session_state():
@@ -29,6 +29,11 @@ def init_session_state():
     
     if "executor" not in st.session_state:
         st.session_state.executor = ThreadPoolExecutor(max_workers=5)
+    
+    if "beginner_mode" not in st.session_state:
+        # Load from saved settings, default to True
+        settings = load_settings()
+        st.session_state.beginner_mode = settings.get("beginner_mode", True)
 
 
 def clear_all_state():

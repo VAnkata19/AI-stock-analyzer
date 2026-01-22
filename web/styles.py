@@ -28,10 +28,6 @@ SIDEBAR_CSS = """
     .st-emotion-cache-1gwvy71 {
         display: none !important;
     }
-    /* Add top padding to main content area */
-    [data-testid="stMain"] > div:first-child {
-        padding-top: 50px !important;
-    }
 </style>
 """
 
