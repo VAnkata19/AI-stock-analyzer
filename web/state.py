@@ -34,6 +34,16 @@ def init_session_state():
         # Load from saved settings, default to True
         settings = load_settings()
         st.session_state.beginner_mode = settings.get("beginner_mode", True)
+    
+    if "llm_provider" not in st.session_state:
+        # Load from saved settings, default to "lm_studio"
+        settings = load_settings()
+        st.session_state.llm_provider = settings.get("llm_provider", "lm_studio")
+    
+    if "selected_model" not in st.session_state:
+        # Load from saved settings, default to empty
+        settings = load_settings()
+        st.session_state.selected_model = settings.get("selected_model", "")
 
 
 def clear_all_state():

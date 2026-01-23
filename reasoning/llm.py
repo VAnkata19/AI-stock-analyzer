@@ -1,13 +1,17 @@
-from dotenv import load_dotenv
+"""Agent runner and response filtering for AI Stock Analyzer."""
 
-load_dotenv()
+from typing import Optional
+import re
 
-from langchain.agents import create_agent
-from langchain_core.messages import HumanMessage, SystemMessage
-from langchain_openai import ChatOpenAI
-from search import search_web
-from stock import get_stock_info
-from date_utils import get_current_date
+from providers import get_provider, get_llm
+
+# Re-export provider functions for backwards compatibility
+from providers import (
+    get_lm_studio_models,
+    get_ollama_models, 
+    get_openai_models,
+)
+
 
 # System instructions for the AI agent
 SYSTEM_PROMPT = """You are an expert stock market analyst AI assistant. Your job is to help users analyze stocks and make informed investment decisions.
@@ -80,52 +84,54 @@ BEGINNER_SECTION = """
    
    💡 **Simple Advice:** One sentence of actionable advice for a beginner"""
 
-# Set up the language model and tools
-#---------------------------------------------------
-llm = ChatOpenAI(model="gpt-4-turbo", temperature=0)
-tools = [get_current_date, search_web, get_stock_info]
-#---------------------------------------------------
-# Create the agent
-agent = create_agent(model=llm, tools=tools)
-#---------------------------------------------------
 
-
-# Runs the agent with a given query
-def run_agent(query: str) -> str:
+def run_agent(query: str, llm_provider: Optional[str] = None, selected_model: Optional[str] = None) -> str:
     """Run the agent with a given query.
     
     Args:
-        query (str): The user's question or request.
+        query: The user's question or request.
+        llm_provider: LLM provider ('lm_studio', 'ollama', 'openai'). If None, reads from streamlit session.
+        selected_model: Model to use. If None, reads from streamlit session.
         
     Returns:
-        str: The agent's response (always includes beginner takeaway section).
+        The agent's response (always includes beginner takeaway section).
     """
     # Always include beginner section - filtering happens at display time
     full_prompt = SYSTEM_PROMPT + BEGINNER_SECTION
     full_prompt += "\n\nBe concise, factual, and helpful. Cite your sources when providing information from web searches. Focus on actionable, timely information first."
     
-    result = agent.invoke({
-        "messages": [
-            SystemMessage(content=full_prompt),
-            HumanMessage(content=query)
-        ]
-    })
-    return result["messages"][-1].content
+    # Get provider and model from params or session state
+    if llm_provider is None or selected_model is None:
+        try:
+            import streamlit as st
+            if llm_provider is None:
+                llm_provider = st.session_state.get("llm_provider", "lm_studio")
+            if selected_model is None:
+                selected_model = st.session_state.get("selected_model", "")
+        except:
+            if llm_provider is None:
+                llm_provider = "lm_studio"
+            if selected_model is None:
+                selected_model = ""
+    
+    print(f"DEBUG: run_agent - Using provider={llm_provider}, model={selected_model}")
+    
+    # Get the provider and run the agent
+    provider = get_provider(llm_provider or "lm_studio")
+    return provider.run_agent(query, full_prompt, selected_model or None)
 
 
 def filter_response_for_mode(response: str, beginner_mode: bool) -> str:
     """Filter the response based on beginner mode setting.
     
     Args:
-        response (str): The full agent response.
-        beginner_mode (bool): Whether beginner mode is enabled.
+        response: The full agent response.
+        beginner_mode: Whether beginner mode is enabled.
         
     Returns:
-        str: Filtered response - only beginner takeaway if beginner mode, 
-             or full response without beginner section if not.
+        Filtered response - only beginner takeaway if beginner mode, 
+        or full response without beginner section if not.
     """
-    import re
-    
     # Use regex to find beginner takeaway section - handles various formatting
     # Looks for the 🎯 emoji followed by BEGINNER (case insensitive)
     pattern = r'(?:^|\n)\s*(?:\d+\.\s*)?(?:\*+\s*)?(?:#+\s*)?🎯\s*\**\s*BEGINNER'

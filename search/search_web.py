@@ -1,4 +1,9 @@
+import os
+from dotenv import load_dotenv
 from tavily import TavilyClient
+
+# Load environment variables from .env file
+load_dotenv()
 
 tavily = TavilyClient()
 

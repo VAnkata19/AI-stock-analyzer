@@ -49,8 +49,12 @@ def render_competitors_tab(symbol: str):
         if future.done():
             try:
                 result = future.result()
+                # Extract response - ensure it's a string
+                response_text = result.get("response", "")
+                if not isinstance(response_text, str):
+                    response_text = str(response_text)
                 # Save to conversation for persistence
-                st.session_state.stock_conversations[symbol]["competitor_analysis"] = result["response"]
+                st.session_state.stock_conversations[symbol]["competitor_analysis"] = response_text
                 save_conversations()
             except Exception as e:
                 st.session_state.stock_conversations[symbol]["competitor_analysis"] = f"Error: {str(e)}"
@@ -62,6 +66,10 @@ def render_competitors_tab(symbol: str):
     
     # Show analysis or auto-start if not running
     if saved_analysis:
+        # Ensure it's a string
+        if not isinstance(saved_analysis, str):
+            saved_analysis = str(saved_analysis)
+        
         # Get beginner mode setting
         beginner_mode = st.session_state.get("beginner_mode", True)
         filtered = filter_response_for_mode(saved_analysis, beginner_mode)
@@ -83,9 +91,17 @@ def render_competitors_tab(symbol: str):
             st.session_state.competitor_analysis_started = set()
         st.session_state.competitor_analysis_started.add(comp_key)
         
+        # Get current provider and model from session state
+        llm_provider = st.session_state.get("llm_provider", "lm_studio")
+        selected_model = st.session_state.get("selected_model", "")
+        
         # Auto-start competitor analysis
         future = st.session_state.executor.submit(
-            run_competitor_analysis_task, symbol, competitors
+            run_competitor_analysis_task,
+            symbol,
+            competitors,
+            llm_provider=llm_provider,
+            selected_model=selected_model
         )
         st.session_state.background_tasks[comp_key] = future
         st.session_state.active_threads[comp_key] = True
@@ -115,7 +131,7 @@ def _render_competitor_hover_card(comp: str, current_symbol: str):
     # Center the popover using columns
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
-        with st.popover(comp, use_container_width=True):
+        with st.popover(comp, width='stretch'):
             # Header with logo
             st.markdown(
                 f'<div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">'
@@ -167,7 +183,7 @@ def _render_competitor_hover_card(comp: str, current_symbol: str):
                     showlegend=False
                 )
                 
-                st.plotly_chart(fig, key=f"mini_chart_{comp}_{current_symbol}", use_container_width=True)
+                st.plotly_chart(fig, key=f"mini_chart_{comp}_{current_symbol}", width="stretch")
             else:
                 st.caption("Chart data unavailable")
             
@@ -190,8 +206,18 @@ def _render_competitor_hover_card(comp: str, current_symbol: str):
                     }
                     save_conversations()
                     
+                    # Get current provider and model from session state
+                    llm_provider = st.session_state.get("llm_provider", "lm_studio")
+                    selected_model = st.session_state.get("selected_model", "")
+                    
                     # Start background analysis
-                    future = st.session_state.executor.submit(run_analysis_task, comp, query)
+                    future = st.session_state.executor.submit(
+                        run_analysis_task,
+                        comp,
+                        query,
+                        llm_provider=llm_provider,
+                        selected_model=selected_model
+                    )
                     st.session_state.background_tasks[comp] = future
                     st.session_state.active_threads[comp] = True
                     

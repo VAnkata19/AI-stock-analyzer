@@ -63,7 +63,9 @@ def render_new_chat_page():
 def _process_new_stock_query():
     """Process a query to detect and create a new stock conversation."""
     query = st.session_state.pending_query
-    detected_symbol = extract_stock_symbol(query)
+    llm_provider = st.session_state.get("llm_provider", "lm_studio")
+    selected_model = st.session_state.get("selected_model", "")
+    detected_symbol = extract_stock_symbol(query, llm_provider, selected_model)
     
     if detected_symbol:
         # Create new conversation for this stock if it doesn't exist

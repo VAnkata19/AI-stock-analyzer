@@ -68,8 +68,18 @@ def _process_pending_query(symbol: str):
         query = st.session_state.pending_query
         st.session_state.pending_query = None
         
+        # Get current provider and model from session state
+        llm_provider = st.session_state.get("llm_provider", "lm_studio")
+        selected_model = st.session_state.get("selected_model", "")
+        
         # Start background analysis using ThreadPoolExecutor
-        future = st.session_state.executor.submit(run_analysis_task, symbol, query)
+        future = st.session_state.executor.submit(
+            run_analysis_task, 
+            symbol, 
+            query,
+            llm_provider=llm_provider,
+            selected_model=selected_model
+        )
         st.session_state.background_tasks[symbol] = future
         st.session_state.active_threads[symbol] = True
         st.rerun()

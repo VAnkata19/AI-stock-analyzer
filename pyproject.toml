@@ -6,9 +6,12 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "langchain>=1.2.6",
+    "langchain-ollama>=1.0.1",
     "langchain-openai>=1.1.7",
+    "lmstudio>=1.5.0",
     "plotly>=6.5.2",
     "python-dotenv>=1.2.1",
     "streamlit>=1.53.0",
     "tavily-python>=0.7.19",
+    "watchdog>=6.0.0",
 ]
