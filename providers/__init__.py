@@ -1,4 +1,4 @@
-"""LLM Provider modules for AI Stock Analyzer."""
+"""LLM Provider modules for Fintellix."""
 
 from .base import BaseLLMProvider
 from .lm_studio import LMStudioProvider

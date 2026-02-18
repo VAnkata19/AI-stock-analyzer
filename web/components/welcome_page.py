@@ -9,7 +9,7 @@ def render_new_chat_page():
     """Render the new chat page (no stock selected)."""
     
     # Welcome header
-    st.markdown("## Welcome to AI Stock Analyzer")
+    st.markdown("## Welcome to Fintellix")
     
     st.markdown("""
     Your personal AI-powered stock research assistant. Get real-time analysis, 

@@ -1,4 +1,4 @@
-"""Agent runner and response filtering for AI Stock Analyzer."""
+"""Agent runner and response filtering for Fintellix."""
 
 from typing import Optional
 import re

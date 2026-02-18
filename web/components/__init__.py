@@ -1,4 +1,4 @@
-"""Web components for stock analyzer UI."""
+"""Web components for Fintellix UI."""
 
 from .stock_page import render_stock_page
 from .welcome_page import render_new_chat_page

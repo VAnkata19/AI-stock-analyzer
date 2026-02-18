@@ -8,7 +8,7 @@ def render_sidebar():
     """Render the sidebar with stock navigation."""
     with st.sidebar:
         st.markdown(
-            '<h1 style="margin-top: -50px;">◈ AI Stock Analyzer</h1>',
+            '<h1 style="margin-top: -50px;">◈ Fintellix</h1>',
             unsafe_allow_html=True
         )
         

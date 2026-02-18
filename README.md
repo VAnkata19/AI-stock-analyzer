@@ -1,4 +1,4 @@
-# AI Stock Analyzer
+# Fintellix
 
 An AI-powered stock research assistant built with Streamlit and LangChain. Get real-time analysis, interactive charts, technical indicators, and competitor comparisons for any stock.
 
@@ -24,8 +24,8 @@ An AI-powered stock research assistant built with Streamlit and LangChain. Get r
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/AI-stock-analyzer.git
-cd AI-stock-analyzer
+git clone https://github.com/yourusername/fintellix.git
+cd fintellix
 ```
 
 2. Create a virtual environment and install dependencies:
