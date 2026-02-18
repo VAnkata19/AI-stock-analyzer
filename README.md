@@ -1,6 +1,10 @@
 # Fintellix
 
-An AI-powered stock research assistant built with Streamlit and LangChain. Get real-time analysis, interactive charts, technical indicators, and competitor comparisons for any stock.
+Stop drowning in financial noise. Fintellix gives you instant, AI-driven stock research — real-time data, technical analysis, and competitor breakdowns — all in a conversational interface that makes sense whether you're a seasoned investor or just getting started.
+
+## Overview
+
+Fintellix is an AI-powered stock research assistant that lets you ask plain-English questions about any stock and get actionable answers backed by live market data. It combines GPT-4-level reasoning with real-time Yahoo Finance data, interactive Plotly charts, and a full suite of technical indicators — wrapped in a clean Streamlit UI. Whether you want a quick sentiment check or a deep technical breakdown, Fintellix handles it in one place.
 
 ## Short Demo:
 
