@@ -2,6 +2,10 @@
 
 An AI-powered stock research assistant built with Streamlit and LangChain. Get real-time analysis, interactive charts, technical indicators, and competitor comparisons for any stock.
 
+## Short Demo:
+
+https://github.com/user-attachments/assets/e31949ad-9399-456f-86e0-36dbc9fae4be
+
 ## Features
 
 - **AI-Powered Analysis** — Ask questions about any stock and get detailed insights powered by GPT-4
